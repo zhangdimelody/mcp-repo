@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import {
   Play,
   ChevronDown,
@@ -36,6 +36,28 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/tooltip";
+// 实现一个seTimeout hook
+function useTimeout(callback: () => void, delay: number | null) {
+  const savedCallback = useRef(callback);
+
+  // 保存最新的回调函数
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  // 设置定时器
+  useEffect(() => {
+    // 如果延迟时间为 null，则不设置定时器
+    if (delay === null) {
+      return;
+    }
+
+    const id = setTimeout(() => savedCallback.current(), delay);
+    // 组件卸载或依赖项变化时清除定时器
+    return () => clearTimeout(id);
+  }, [delay]);
+}
+
 
 interface SidebarProps {
   connectionStatus: ConnectionStatus;
@@ -90,8 +112,20 @@ const Sidebar = ({
   const [showConfig, setShowConfig] = useState(false);
   const [shownEnvVars, setShownEnvVars] = useState<Set<string>>(new Set());
 
+  // useTimeout(() => {
+  //   onDisconnect();
+  //   onConnect();
+  // }, 1000);
+  useEffect(()=>{
+    const timer = setTimeout(()=>{
+      onDisconnect();
+      onConnect();
+    }, 1000)
+    return ()=>clearTimeout(timer)
+  }, [])
+
   return (
-    <div className="w-80 bg-card border-r border-border flex flex-col h-full">
+    <div className="hidden w-80 bg-card border-r border-border flex flex-col h-full">
       <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
         <div className="flex items-center">
           <h1 className="ml-2 text-lg font-semibold">

@@ -5,9 +5,12 @@ interface Message {
   content: string;
   role: string;
   timestamp?: number;
+  type?: string
 }
-
-const ChatBox: React.FC = () => {
+import {
+  CallToolResultSchema
+} from "@modelcontextprotocol/sdk/types.js";
+const ChatBox: React.FC = ({items, listItems, callTool, onConnect}) => {
   const [inputMessage, setInputMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([
     { content: '你好！我是小天，有什么可以帮你的吗？', role: 'assistant', timestamp: Date.now() }
@@ -17,6 +20,21 @@ const ChatBox: React.FC = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    setTimeout(()=>{
+      listItems()
+    }, 1000)
+  }, []);
+  console.log(items)
+  const newItems = items.reduce((acc , item)=>{
+    acc.push({
+      type: "function",
+      function: item,
+      strict: false
+    })
+    return acc
+  },[])
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -33,28 +51,7 @@ const ChatBox: React.FC = () => {
         },
         body: JSON.stringify({
           model: 'Qwen/QwQ-32B',
-          tools: [
-            {
-              type: "function",
-              function: {
-                  name: "multiplication",
-                  description: "Calculate the multiplication of two numbers",
-                  parameters: {
-                      number1:"数字1",
-                      number2:"数字2"
-                  }
-              },
-              strict: false
-            },
-            {
-              type: "function",
-              function: {
-                  name: "weather",
-                  description: "获取天气预报数据",
-              },
-              strict: false
-            }
-          ],
+          tools: newItems,
           stream: false,  // 使用非流式
           max_tokens: 512,
           temperature: 0.7,
@@ -93,13 +90,32 @@ const ChatBox: React.FC = () => {
           console.log('存在方法调用');
           
           const function_name = res.tool_calls[0].function.name;
+          setMessages(prev => [...prev, { 
+            content: '思考过程：'+res.reasoning_content, 
+            role: 'assistant',
+            timestamp: Date.now(),
+            type: 'reason'
+          }])
           console.log('存在方法调用:'+function_name);
           setMessages(prev => [...prev, { 
-            content: res.reasoning_content, 
+            content: '存在方法调用:'+function_name, 
             role: 'assistant',
             timestamp: Date.now() 
           }])
-
+          const funcData = res.tool_calls[0].function;
+          try {
+            const res = await callTool(funcData.name, JSON.parse(funcData.arguments));
+            const parsedResult = CallToolResultSchema.safeParse(res);
+            console.log('call tools',parsedResult)
+            
+            setMessages(prev => [...prev, { 
+              content: '结果：'+ parsedResult.data?.content[0].text, 
+              role: 'assistant',
+              timestamp: Date.now() 
+            }])
+          } catch (e) {
+            console.log('call tools error',e)
+          }
           if (function_name == 'multiplication'){
               //参数获取
               const argumentstemp = res.tool_calls[0].function.arguments;
@@ -172,7 +188,7 @@ const ChatBox: React.FC = () => {
             className={`message ${(message.role==='user') ? 'user-message' : 'bot-message'}`}
           >
             {!(message.role==='user') && <div className="avatar">天</div>}
-            <div className="message-content">
+            <div className={'message-content '+ (message.type==='reason'?'reason-txt':'')}>
               {message.content}
               <div className="message-time">
                 {new Date(message.timestamp || Date.now()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}

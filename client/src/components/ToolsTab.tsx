@@ -29,6 +29,7 @@ const ToolsTab = ({
   setSelectedTool,
   toolResult,
   nextCursor,
+  onConnect
 }: {
   tools: Tool[];
   listTools: () => void;
@@ -119,13 +120,12 @@ const ToolsTab = ({
   return (
     <TabsContent value="tools">
       <Chat
-      items={tools}
-      listItems={listTools}
-      clearItems={() => {
-        clearTools();
-        setSelectedTool(null);
-      }} />
-      <div className="grid grid-cols-2 gap-4">
+        items={tools}
+        listItems={listTools}
+        callTool={callTool}
+        onConnect={onConnect}
+      />
+      {/* <div className="grid grid-cols-2 gap-4">
         <ListPane
           items={tools}
           listItems={listTools}
@@ -287,7 +287,7 @@ const ToolsTab = ({
             )}
           </div>
         </div>
-      </div>
+      </div> */}
     </TabsContent>
   );
 };

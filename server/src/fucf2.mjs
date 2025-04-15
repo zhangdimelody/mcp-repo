@@ -9,7 +9,8 @@ const server = new McpServer({
 }, {});
 
 // Add an addition tool
-server.tool("add",
+server.tool("add2",
+  "Calculate the add of two numbers",
   { a: z.number(), b: z.number() },
   async ({ a, b }) => ({
     content: [{ type: "text", text: String(a + b) }]

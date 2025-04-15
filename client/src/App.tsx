@@ -437,7 +437,9 @@ const App = () => {
         CompatibilityCallToolResultSchema,
         "tools",
       );
+      console.log('calltoolresponse',response)
       setToolResult(response);
+      return response
     } catch (e) {
       const toolResult: CompatibilityCallToolResult = {
         content: [
@@ -449,6 +451,7 @@ const App = () => {
         isError: true,
       };
       setToolResult(toolResult);
+      return toolResult
     }
   };
 
@@ -523,7 +526,7 @@ const App = () => {
               className="w-full p-4"
               onValueChange={(value) => (window.location.hash = value)}
             >
-              <TabsList className="mb-4 p-0">
+              {/* <TabsList className="mb-4 p-0">
                 <TabsTrigger
                   value="resources"
                   disabled={!serverCapabilities?.resources}
@@ -562,7 +565,7 @@ const App = () => {
                   <FolderTree className="w-4 h-4 mr-2" />
                   Roots
                 </TabsTrigger>
-              </TabsList>
+              </TabsList> */}
 
               <div className="w-full">
                 {!serverCapabilities?.resources &&
@@ -660,7 +663,7 @@ const App = () => {
                       callTool={async (name, params) => {
                         clearError("tools");
                         setToolResult(null);
-                        await callTool(name, params);
+                        return await callTool(name, params);
                       }}
                       selectedTool={selectedTool}
                       setSelectedTool={(tool) => {
@@ -671,6 +674,7 @@ const App = () => {
                       toolResult={toolResult}
                       nextCursor={nextToolCursor}
                       error={errors.tools}
+                      onConnect={connectMcpServer}
                     />
                     <ConsoleTab />
                     <PingTab
