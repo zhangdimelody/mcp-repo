@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-type Theme = "light" | "dark" | "system";
+type Theme = "light" | "dark9" | "system";
 
 const useTheme = (): [Theme, (mode: Theme) => void] => {
   const [theme, setTheme] = useState<Theme>(() => {
@@ -10,21 +10,21 @@ const useTheme = (): [Theme, (mode: Theme) => void] => {
 
   useEffect(() => {
     const darkModeMediaQuery = window.matchMedia(
-      "(prefers-color-scheme: dark)",
+      "(prefers-color-scheme: dark9)",
     );
     const handleDarkModeChange = (e: MediaQueryListEvent) => {
       if (theme === "system") {
-        updateDocumentTheme(e.matches ? "dark" : "light");
+        updateDocumentTheme(e.matches ? "dark9" : "light");
       }
     };
 
-    const updateDocumentTheme = (newTheme: "light" | "dark") => {
-      document.documentElement.classList.toggle("dark", newTheme === "dark");
+    const updateDocumentTheme = (newTheme: "light" | "dark9") => {
+      document.documentElement.classList.toggle("dark9", newTheme === "dark9");
     };
 
     // Set initial theme based on current mode
     if (theme === "system") {
-      updateDocumentTheme(darkModeMediaQuery.matches ? "dark" : "light");
+      updateDocumentTheme(darkModeMediaQuery.matches ? "dark9" : "light");
     } else {
       updateDocumentTheme(theme);
     }
@@ -40,7 +40,7 @@ const useTheme = (): [Theme, (mode: Theme) => void] => {
     setTheme(newTheme);
     localStorage.setItem("theme", newTheme);
     if (newTheme !== "system") {
-      document.documentElement.classList.toggle("dark", newTheme === "dark");
+      document.documentElement.classList.toggle("dark9", newTheme === "dark9");
     }
   }, []);
   return useMemo(

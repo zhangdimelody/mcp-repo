@@ -18,6 +18,7 @@ import { Loader2, Send } from "lucide-react";
 import { useEffect, useState } from "react";
 import ListPane from "./ListPane";
 import JsonView from "./JsonView";
+import Chat from "./Chat";
 
 const ToolsTab = ({
   tools,
@@ -117,6 +118,13 @@ const ToolsTab = ({
 
   return (
     <TabsContent value="tools">
+      <Chat
+      items={tools}
+      listItems={listTools}
+      clearItems={() => {
+        clearTools();
+        setSelectedTool(null);
+      }} />
       <div className="grid grid-cols-2 gap-4">
         <ListPane
           items={tools}

@@ -70,10 +70,10 @@ const App = () => {
     tools: null,
   });
   const [command, setCommand] = useState<string>(() => {
-    return localStorage.getItem("lastCommand") || "node";
+    return localStorage.getItem("lastCommand") || "mcp-server-everything";
   });
   const [args, setArgs] = useState<string>(() => {
-    return localStorage.getItem("lastArgs") || "src/fucf2.mjs";
+    return localStorage.getItem("lastArgs") || "";
   });
 
   const [sseUrl, setSseUrl] = useState<string>(() => {
@@ -262,7 +262,7 @@ const App = () => {
 
   useEffect(() => {
     if (!window.location.hash) {
-      window.location.hash = "tools";
+      window.location.hash = "resources";
     }
   }, []);
 
@@ -693,11 +693,6 @@ const App = () => {
                       setRoots={setRoots}
                       onRootsChange={handleRootsChange}
                     />
-                      <RootsTab
-                      roots={roots}
-                      setRoots={setRoots}
-                      onRootsChange={handleRootsChange}
-                    />
                   </>
                 )}
               </div>
@@ -710,7 +705,7 @@ const App = () => {
             </div>
           )}
         </div>
-        {/* <div
+        <div
           className="relative border-t border-border"
           style={{
             height: `${historyPaneHeight}px`,
@@ -728,7 +723,7 @@ const App = () => {
               serverNotifications={notifications}
             />
           </div>
-        </div> */}
+        </div>
       </div>
     </div>
   );

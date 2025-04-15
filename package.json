@@ -21,7 +21,7 @@
     "server"
   ],
   "scripts": {
-    "dev": "concurrently \"cd client && npm run dev\" \"cd server && npm run dev\"",
+    "dev": "concurrently \"cd client && npm run dev\" \"cd server && npm run dev\" && \"node server/src/fucf2.mjs\"",
     "dev:windows": "concurrently \"cd client && npm run dev\" \"cd server && npm run dev:windows",
     "test": "npm run prettier-check && cd client && npm test",
     "build-server": "cd server && npm run build",
