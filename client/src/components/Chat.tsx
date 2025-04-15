@@ -102,6 +102,11 @@ const ChatBox: React.FC = ({items, listItems, callTool, onConnect}) => {
             role: 'assistant',
             timestamp: Date.now() 
           }])
+          setMessages(prev => [...prev, { 
+            content: JSON.stringify(res.tool_calls[0].function), 
+            role: 'assistant',
+            timestamp: Date.now() 
+          }])
           const funcData = res.tool_calls[0].function;
           try {
             const res = await callTool(funcData.name, JSON.parse(funcData.arguments));
@@ -158,21 +163,6 @@ const ChatBox: React.FC = ({items, listItems, callTool, onConnect}) => {
       setMessages([...messages, newMessage]);
       setInputMessage('');
       handleEnter(inputMessage)
-      // 模拟智能回复
-    //   setTimeout(() => {
-    //     const replies = [
-    //       '我明白你的意思了',
-    //       '这个问题很有趣',
-    //       '让我想想怎么回答你',
-    //       '谢谢你的提问'
-    //     ];
-    //     const randomReply = replies[Math.floor(Math.random() * replies.length)];
-    //     setMessages(prev => [...prev, { 
-    //       content: randomReply, 
-    //       role: 'assistant',
-    //       timestamp: Date.now() 
-    //     }]);
-    //   }, 800 + Math.random() * 1200);
     }
   };
 
